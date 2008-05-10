@@ -1303,6 +1303,8 @@ static void structureSaveTagged(STRUCTURE *psStruct)
 			}
 			tagWriteLeave(0x12);
 		} break;
+		case REF_SHIELD_GENERATOR:
+		{} break;
 		case REF_HQ:
 		case REF_FACTORY_MODULE:
 		case REF_POWER_MODULE:

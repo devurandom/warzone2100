@@ -61,6 +61,7 @@ REF_LAB,
 REF_REARM_PAD,
 REF_MISSILE_SILO,
 REF_SAT_UPLINK,         //added for updates - AB 8/6/99
+REF_SHIELD_GENERATOR,
 NUM_DIFF_BUILDINGS,		//need to keep a count of how many types for IMD loading
 } STRUCTURE_TYPE;
 
@@ -244,6 +245,11 @@ typedef struct _rearm_pad
                                                that is being worked on */
 } REARM_PAD;
 
+typedef struct
+{
+	unsigned int power;
+} SHIELD_GENERATOR;
+
 typedef union
 {
 	RESEARCH_FACILITY researchFacility;
@@ -252,6 +258,7 @@ typedef union
 	POWER_GEN         powerGenerator;
 	REPAIR_FACILITY   repairFacility;
 	REARM_PAD         rearmPad;
+	SHIELD_GENERATOR  shieldGenerator;
 } FUNCTIONALITY;
 
 //this structure is used whenever an instance of a building is required in game

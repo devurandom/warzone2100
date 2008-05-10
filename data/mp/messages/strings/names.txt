@@ -1,8 +1,8 @@
 /* Names data file for localisation
- * The id's should be less than 20 chars 
+ * The id's should be less than 20 chars
  *
  * Text like this "*text*" is not final and should not be translated.
- */ 
+ */
 
 /*
  * VEHICLES
@@ -217,14 +217,14 @@ CyborgFlamer01Grd			_("Flamer")
 CyborgRkt01Ground			_("Lancer")
 CyborgCannon01Grd			_("Heavy Gunner")
 
-// Cyborgs - shared 
+// Cyborgs - shared
 Cyb-Chain-GROUND			_("Machinegunner")
 Cyb-Flamer-GROUND			_("Cyborg Flamer")
 Cyb-Cannon-GROUND			_("Heavy Gunner")
 Cyb-Rocket-GROUND			_("Lancer")
 Cyb-RotMG-GROUND			_("Assault Gunner")
 
-/* TEST CYBORGS */	
+/* TEST CYBORGS */
 CyborgCan01Air				"*TEST - Cyborg Cannon01 Air*"
 CyborgCan01Ground			_("Cyborg Cannon")
 CyborgRkt01Air				"*TEST - Cyborg Rocket01 Air*"
@@ -278,15 +278,15 @@ CyborgCannonGrd				"*Cyborg Cannon*"
 CyborgFlamerGrd				"*Cyborg Flamer*"
 //CyborgChn01Ground			"*Cyborg Machinegun*"
 CybFlamer01CGrd				"*Cyborg Flamer*"
-//CybRocketGrd				"*Cyborg Rocket*"	
+//CybRocketGrd				"*Cyborg Rocket*"
 CybRotMgGrd				"*Cyborg Assault Gun*"
 
 //CyborgNXATMissGrd			"*CyborgNXATMissGrd*"
 //CyborgNXATMissJmp			"*CyborgNXATMissJ*"
-//			"*CybNXCybRail1Grd*"	
+//			"*CybNXCybRail1Grd*"
 //CybNXCybRail1Jmp			"*CybNXCybRail1J*"
 CybNXPulseLasJmp			"*CybNXPulseLasJ*"
-//CybNXHvMissJmp				"*CybNXHvMissJ*"		
+//CybNXHvMissJmp				"*CybNXHvMissJ*"
 CybNXMissJmp				"*CybNXMissJmp*"
 //CybNXPulseLasJmp			"*CybNXPulseLasJ*"
 CybNXRail1Jmp				"*CybNXRail1Jmp*"
@@ -309,7 +309,7 @@ Construct				"*TEST - Construct*"
 RadarProgram				"*TEST - Radar Program*"
 Demolish				_("Demolish")
 
-/* CONSTRUCTION */	
+/* CONSTRUCTION */
 ZNULLCONSTRUCT				_("Z NULL CONSTRUCT")
 Spade1Mk1				_("Truck")
 
@@ -583,7 +583,7 @@ Bomb1-VTOL-LtHE				_("VTOL Cluster Bombs Bay")
 Bomb2-VTOL-HvHE				_("VTOL Heap Bomb Bay")
 Bomb3-VTOL-LtINC				_("VTOL Phosphor Bomb Bay")
 Bomb4-VTOL-HvyINC				_("VTOL Thermite Bomb Bay")
-											 
+
 // Collective Specific Defensive Structures
 CollectiveWall				_("Collective Wall")
 CollectiveCWall				_("Collective Corner Wall")
@@ -655,7 +655,7 @@ CAM3RESEARCH				_("CAM3 RESEARCH")
 R-Comp-CommandTurret01			_("Command Turret")
 R-Comp-SynapticLink			_("Synaptic Link")
 
-R-Comp-MissileCodes01			_("Missile Targeting Codes") 
+R-Comp-MissileCodes01			_("Missile Targeting Codes")
 R-Comp-MissileCodes02			_("Second Level Missile Targeting Codes")
 R-Comp-MissileCodes03			_("Third Level Missile Firing Codes")
 
@@ -812,7 +812,7 @@ R-Struc-Factory-Upgrade07		_("Advanced Factory Production")
 R-Struc-Factory-Upgrade08		_("Advanced Factory Production Mk2")
 R-Struc-Factory-Upgrade09		_("Advanced Factory Production Mk3")
 //R-Struc-Factory-Upgrade10		_("Self-Replicating Factory Production")
-	
+
 R-Struc-Materials01			_("Reinforced Base Structure Materials")
 R-Struc-Materials02			_("Reinforced Base Structure Materials Mk2")
 R-Struc-Materials03			_("Reinforced Base Structure Materials Mk3")
@@ -951,7 +951,7 @@ R-Vehicle-Body09				_("Heavy Body - Tiger")
 R-Vehicle-Body10				_("Heavy Body - Vengeance")
 R-Vehicle-Body11				_("Heavy Body - Python")
 R-Vehicle-Body12				_("Heavy Body - Mantis")
-	
+
 R-Vehicle-Engine01			_("Fuel Injection Engine")
 R-Vehicle-Engine02			_("Fuel Injection Engine Mk2")
 R-Vehicle-Engine03			_("Fuel Injection Engine Mk3")
@@ -973,7 +973,7 @@ R-Vehicle-Metals07			_("Superdense Composite Alloys")
 R-Vehicle-Metals08			_("Superdense Composite Alloys Mk2")
 R-Vehicle-Metals09			_("Superdense Composite Alloys Mk3")
 //R-Vehicle-Metals10			_("Bonded Laminates")
-	
+
 R-Vehicle-Prop-Hover			_("Hover Propulsion")
 R-Vehicle-Prop-Hover02			_("Hover Propulsion II")
 //R-Vehicle-Prop-Hover03			_("Hover Propulsion III")
@@ -1180,7 +1180,7 @@ R-Wpn-Rocket-ROF06			_("Rapid Fire Mini-Rockets Mk3")
 R-Wpn-RocketSlow-Accuracy01		_("Improved Rocket Wire Guidance")
 R-Wpn-RocketSlow-Accuracy02		_("Rocket Laser Designator")
 R-Wpn-RocketSlow-Accuracy03		_("Thermal Imaging Rockets")
-R-Wpn-RocketSlow-Damage01		_("HEAT Rocket Warhead") 
+R-Wpn-RocketSlow-Damage01		_("HEAT Rocket Warhead")
 R-Wpn-RocketSlow-Damage02		_("HEAT Rocket Warhead Mk2")
 R-Wpn-RocketSlow-Damage03		_("HEAT Rocket Warhead Mk3")
 R-Wpn-RocketSlow-Damage04		_("HESH Rocket Warhead")
@@ -1929,3 +1929,6 @@ WyvernHvLaserTracks			_("Heavy Laser Wyvern Tracks")
 
 ViperLtMGHalfTracks			_("Machinegun Viper Half-Tracks")
 ViperFlameHalfTracks		_("Flamer Viper Half-Tracks")
+
+R-ShieldGenerator			_("Shield Generator")
+ShieldGenerator				_("Shield Generator")

@@ -4005,6 +4005,9 @@ static void structureEffectsPlayer( UDWORD player )
 					}
 				}
 			}
+			else if(psStructure->pStructureType->type == REF_SHIELD_GENERATOR
+				&& psStructure->visible[selectedPlayer] )
+			{}
 		}
 	}
 }

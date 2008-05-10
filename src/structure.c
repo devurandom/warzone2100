@@ -353,6 +353,7 @@ static const struct
 	{ "REARM PAD",          REF_REARM_PAD           },
 	{ "MISSILE SILO",       REF_MISSILE_SILO        },
 	{ "SAT UPLINK",         REF_SAT_UPLINK          },
+	{ "SHIELD GENERATOR",   REF_SHIELD_GENERATOR    },
 };
 
 static STRUCTURE_TYPE structureType(const char* typeName)
@@ -1998,6 +1999,7 @@ STRUCTURE* buildStructure(STRUCTURE_STATS* pStructureType, UDWORD x, UDWORD y, U
 			psBuilding->status = SS_BEING_BUILT;
 			if (psBuilding->player == selectedPlayer && !FromSave)
 			{
+				intResetScreen(false);	// hack to ensure we don't crash if a tab is removed
 				intRefreshScreen();
 			}
 		}
@@ -4135,6 +4137,7 @@ BOOL validLocation(BASE_STATS *psStats, UDWORD x, UDWORD y, UDWORD player,
 			case REF_REARM_PAD:
 			case REF_MISSILE_SILO:
 			case REF_SAT_UPLINK:
+			case REF_SHIELD_GENERATOR:
 				/*need to check each tile the structure will sit on is not water*/
 				for (i = site.xTL; i <= site.xBR && valid; i++)
 				{
