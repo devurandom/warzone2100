@@ -27,7 +27,6 @@
  *
  */
 #include "frame.h"
-#include "file.h"
 
 #include <SDL.h>
 #include <physfs.h>
@@ -35,6 +34,8 @@
 #include "frameint.h"
 #include "frameresource.h"
 #include "input.h"
+#include "file.h"
+#include "utf8.h"
 #include "SDL_framerate.h"
 
 #include "cursors.h"
@@ -254,6 +255,8 @@ BOOL frameInitialise(
 	/* Initialise the frame rate stuff */
 	InitFrameStuff();
 
+	utf8Initialise();
+
 	// Initialise the resource stuff
 	if (!resInitialise())
 	{
@@ -297,6 +300,8 @@ void frameShutDown(void)
 
 	// Shutdown the resource stuff
 	resShutDown();
+
+	utf8ShutDown();
 }
 
 PHYSFS_file* openLoadFile(const char* fileName, bool hard_fail)

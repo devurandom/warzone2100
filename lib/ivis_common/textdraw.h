@@ -44,7 +44,7 @@ extern int iV_GetTextBelowBase(void);
 extern int iV_GetTextLineSize(void);
 extern unsigned int iV_GetTextWidth(const char* String);
 extern unsigned int iV_GetCountedTextWidth(const char* string, size_t string_length);
-extern unsigned int iV_GetCharWidth(uint32_t charCode);
+extern unsigned int iV_GetCharWidth(const char* string);
 
 extern unsigned int iV_GetTextHeight(const char* string);
 extern void iV_SetTextColour(PIELIGHT colour);

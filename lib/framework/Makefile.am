@@ -25,6 +25,7 @@ CLEANFILES = \
 	strres_parser.tab.h
 
 noinst_LIBRARIES = libframework.a
+
 noinst_HEADERS = \
 	strres_parser.tab.h \
 	resource_parser.tab.h \
@@ -59,7 +60,8 @@ noinst_HEADERS = \
 	gettext.h \
 	macros.h \
 	SDL_framerate.h \
-	wzglobal.h
+	wzglobal.h \
+	utf8.h
 
 libframework_a_SOURCES = \
 	resource_lexer.lex.c \
@@ -83,4 +85,5 @@ libframework_a_SOURCES = \
 	tagfile.c \
 	treap.c \
 	trig.c \
-	utf.c
+	utf.c \
+	utf8.c

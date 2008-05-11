@@ -156,7 +156,7 @@ extern void keyScanToString(KEY_CODE code, char *ascii, UDWORD maxStringSize);
 extern void inputInitialise(void);
 
 /** Add a key press to the key buffer. */
-extern void inputAddBuffer(UDWORD code, char char_code, UDWORD count);
+extern void inputAddBuffer(UDWORD code, uint32_t unicode);
 
 /** This returns true if the key is currently depressed. */
 extern BOOL keyDown(KEY_CODE code);
@@ -225,7 +225,7 @@ extern void SetMousePos(Uint16 x, Uint16 y);
  */
 extern UDWORD inputGetKey(void);
 
-extern char inputGetCharKey(void);
+extern uint32_t inputGetUnicode(void);
 
 /** Clear the input buffer. */
 extern void inputClearBuffer(void);

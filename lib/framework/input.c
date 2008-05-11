@@ -81,9 +81,9 @@ static INPUT_STATE aMouseState[6];
 static UDWORD	pInputBuffer[INPUT_MAXSTR];
 static UDWORD	*pStartBuffer, *pEndBuffer;
 
-static char	pCharInputBuffer[INPUT_MAXSTR];
-static char	*pCharStartBuffer, *pCharEndBuffer;
-static char	currentChar;
+static uint32_t pUnicodeInputBuffer[INPUT_MAXSTR];
+static uint32_t *pUnicodeStartBuffer, *pUnicodeEndBuffer;
+static uint32_t currentUnicode;
 
 
 static KEY_CODE sdlKeyToKeyCode(SDLKey key)
@@ -126,8 +126,8 @@ void inputInitialise(void)
 
 	pStartBuffer = pInputBuffer;
 	pEndBuffer = pInputBuffer;
-	pCharStartBuffer = pCharInputBuffer;
-	pCharEndBuffer = pCharInputBuffer;
+	pUnicodeStartBuffer = pUnicodeInputBuffer;
+	pUnicodeEndBuffer = pUnicodeInputBuffer;
 
 	dragX = mouseXPos = screenWidth/2;
 	dragY = mouseYPos = screenHeight/2;
@@ -137,38 +137,26 @@ void inputInitialise(void)
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 }
 
-/* add count copies of the characater code to the input buffer */
-void inputAddBuffer(UDWORD code, char char_code, UDWORD count)
-{
-	UDWORD	*pNext;
-	char	*pCharNext;
 
-	/* Calculate what pEndBuffer will be set to next */
-	pNext = pEndBuffer + 1;
-	pCharNext = pCharEndBuffer + 1;
-	if (pNext >= pInputBuffer + INPUT_MAXSTR)
+/* add count copies of the characater code to the input buffer */
+void inputAddBuffer(UDWORD code, uint32_t unicode)
+{
+	/* Move boundaries, wrap */
+	pEndBuffer++;
+	pUnicodeEndBuffer++;
+	if (pEndBuffer >= pInputBuffer + INPUT_MAXSTR)
 	{
-		pNext = pInputBuffer;
-		pCharNext = pCharInputBuffer;
+		pEndBuffer = pInputBuffer;
+		pUnicodeEndBuffer = pUnicodeInputBuffer;
 	}
 
-	while (pNext != pStartBuffer && count > 0)
+	/* Add only if buffer not full */
+	if (pEndBuffer != pStartBuffer)
 	{
 		/* Store the character */
-		*pEndBuffer = code;
-		*pCharEndBuffer = char_code;
-		pEndBuffer = pNext;
-		pCharEndBuffer = pCharNext;
-		count -= 1;
+		*(pEndBuffer-1) = code;
+		*(pUnicodeEndBuffer-1) = unicode;
 
-		/* Calculate what pEndBuffer will be set to next */
-		pNext = pEndBuffer + 1;
-		pCharNext = pCharEndBuffer + 1;
-		if (pNext >= pInputBuffer + INPUT_MAXSTR)
-		{
-			pNext = pInputBuffer;
-			pCharNext = pCharInputBuffer;
-		}
 	}
 }
 
@@ -178,8 +166,8 @@ void inputClearBuffer(void)
 {
 	pStartBuffer = pInputBuffer;
 	pEndBuffer = pInputBuffer;
-	pCharStartBuffer = pCharInputBuffer;
-	pCharEndBuffer = pCharInputBuffer;
+	pUnicodeStartBuffer = pUnicodeInputBuffer;
+	pUnicodeEndBuffer = pUnicodeInputBuffer;
 }
 
 
@@ -190,31 +178,28 @@ void inputClearBuffer(void)
  */
 UDWORD inputGetKey(void)
 {
-	UDWORD	retVal;
-
 	if (pStartBuffer != pEndBuffer)
 	{
-		retVal = *pStartBuffer;
-		currentChar = *pCharStartBuffer;
+		UDWORD retval = *pStartBuffer;
+		currentUnicode = *pUnicodeStartBuffer;
 		pStartBuffer += 1;
-		pCharStartBuffer += 1;
+		pUnicodeStartBuffer += 1;
 
 		if (pStartBuffer >= pInputBuffer + INPUT_MAXSTR)
 		{
 			pStartBuffer = pInputBuffer;
-			pCharStartBuffer = pCharInputBuffer;
+			pUnicodeStartBuffer = pUnicodeInputBuffer;
 		}
-	}
-	else
-	{
-		retVal = 0;
+
+		return retval;
 	}
 
-	return retVal;
+	return 0;
 }
 
-char inputGetCharKey(void) {
-	return currentChar;
+uint32_t inputGetUnicode(void)
+{
+	return currentUnicode;
 }
 
 
@@ -224,7 +209,7 @@ char inputGetCharKey(void) {
 void inputHandleKeyEvent(SDL_KeyboardEvent * keyEvent)
 {
 	UDWORD code, vk;
-	unsigned char char_code = keyEvent->keysym.unicode; // FIXME Discarding last 8 bit of 16bit UNICODE !!!
+	uint32_t unicode = keyEvent->keysym.unicode;
 
 	switch (keyEvent->type)
 	{
@@ -267,11 +252,11 @@ void inputHandleKeyEvent(SDL_KeyboardEvent * keyEvent)
 			}
 
 			debug( LOG_NEVER, "Code: %x\n", vk);
-			if (char_code < 32)
+/*			if (unicode < 32)
 			{
-				char_code = 0;
-			}
-			inputAddBuffer(vk, char_code, 1);
+				unicode = 0;
+			}*/
+			inputAddBuffer(vk, unicode);
 
 			code = sdlKeyToKeyCode(keyEvent->keysym.sym);
 			if ( aKeyState[code].state == KEY_UP ||

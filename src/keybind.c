@@ -20,6 +20,7 @@
 #include <string.h>
 
 #include "lib/framework/frame.h"
+#include "lib/framework/utf8.h"
 #include "lib/framework/strres.h"
 #include "lib/framework/stdio_ext.h"
 #include "objects.h"
@@ -1848,7 +1849,7 @@ void kf_GiveTemplateSet(void)
 // Chat message. NOTE THIS FUNCTION CAN DISABLE ALL OTHER KEYPRESSES
 void kf_SendTextMessage(void)
 {
-	char	ch;
+	uint32_t key;
 	char tmp[MAX_CONSOLE_STRING_LENGTH + 100];
 
 	if(bAllowOtherKeyPresses)									// just starting.
@@ -1859,11 +1860,10 @@ void kf_SendTextMessage(void)
 		inputClearBuffer();
 	}
 
-	ch = (char)inputGetKey();
-	while (ch != 0)												// in progress
+	for (key = inputGetKey(); key != 0; key = inputGetKey()) // in progress
 	{
 		// Kill if they hit return - it maxes out console or it's more than one line long
-		if ((ch == INPBUF_CR) || (strlen(sTextToSend)>=MAX_CONSOLE_STRING_LENGTH-16) // Prefixes with ERROR: and terminates with '?'
+		if ((key == INPBUF_CR) || (strlen(sTextToSend) >= MAX_CONSOLE_STRING_LENGTH-16) // Prefixes with ERROR: and terminates with '?'
 		 || iV_GetTextWidth(sTextToSend) > (pie_GetVideoBufferWidth()-64))// sendit
 		{
 			bAllowOtherKeyPresses = true;
@@ -1925,15 +1925,17 @@ void kf_SendTextMessage(void)
 			}
 			return;
 		}
-		else if(ch == INPBUF_BKSPACE )							// delete
+		else if(key == INPBUF_BKSPACE )							// delete
 		{
 			if(sTextToSend[0] != '\0')							// cant delete nothing!
 			{
 				sTextToSend[strlen(sTextToSend)-1]= '\0';
 				sstrcpy(sCurrentConsoleText, sTextToSend);		//beacons
+				*(char*)utf8FindPrevSign(sTextToSend, sTextToSend + strlen(sTextToSend) - 1) = '\0';
+				sstrcpy(sCurrentConsoleText, sTextToSend); //beacons
 			}
 		}
-		else if(ch == INPBUF_ESC)								//abort.
+		else if(key == INPBUF_ESC)								//abort.
 		{
 			bAllowOtherKeyPresses = true;
 			sstrcpy(sCurrentConsoleText, "");
@@ -1942,13 +1944,13 @@ void kf_SendTextMessage(void)
 		}
 		else							 						// display
 		{
-			const char input_char[2] = { inputGetCharKey(), '\0' };
+			char buf[8] = {'\0'};
 
-			sstrcat(sTextToSend, input_char);
+			ucs2ToUtf8(inputGetUnicode(), buf, sizeof(buf));
+
+			sstrcat(sTextToSend, buf;
 			sstrcpy(sCurrentConsoleText, sTextToSend);
 		}
-
-		ch = (char)inputGetKey();
 	}
 
 	// macro store stuff

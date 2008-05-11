@@ -20,6 +20,7 @@
 
 #include "lib/ivis_opengl/GLee.h"
 #include "lib/framework/frame.h"
+#include "lib/framework/utf8.h"
 #include <stdlib.h>
 #include <string.h>
 #include "lib/framework/string_ext.h"
@@ -321,12 +322,14 @@ unsigned int iV_GetTextHeight(const char* string)
 	return (unsigned int)pixel_height;
 }
 
-unsigned int iV_GetCharWidth(uint32_t charCode)
+unsigned int iV_GetCharWidth(const char* string)
 {
 	float boundingbox[8];
 	float pixel_width, point_width;
 
-	if (!glcGetCharMetric(charCode, GLC_BOUNDS, boundingbox))
+// 	uint32_t charCode = utf8ToUcs4(string, utf8SignSize(string + strlen(string), string));
+
+	if (!glcGetCharMetric(*string/*charCode*/, GLC_BOUNDS, boundingbox))
 	{
 		debug(LOG_ERROR, "Couldn't retrieve a bounding box for the character code %u", charCode);
 		return 0;
@@ -503,7 +506,7 @@ int iV_DrawFormattedText(const char* String, UDWORD x, UDWORD y, UDWORD Width, U
 			{
 				// Should be a space below, not '-', but need to work around bug in QuesoGLC
 				// which was fixed in CVS snapshot as of 2007/10/26, same day as I reported it :) - Per
-				WWidth += iV_GetCharWidth('-');
+				WWidth += iV_GetCharWidth("-");
 				if (WWidth <= Width)
 				{
 					FWord[i] = ' ';
