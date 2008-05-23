@@ -165,8 +165,8 @@ BOOL loadFeatureStats(const char *pFeatureData, UDWORD bufferSize)
 		psFeature->baseWidth = Width;
 		psFeature->baseBreadth = Breadth;
 
-		psFeature->pName = allocateName(featureName);
-		if (!psFeature->pName)
+		psFeature->uniqueName = strdup(featureName);
+		if (!allocateName(&psFeature->pName, featureName)) // FIXME strres wrapper
 		{
 			return false;
 		}
@@ -184,7 +184,7 @@ BOOL loadFeatureStats(const char *pFeatureData, UDWORD bufferSize)
 		psFeature->psImd = (iIMDShape *) resGetData("IMD", GfxFile);
 		if (psFeature->psImd == NULL)
 		{
-			debug( LOG_ERROR, "Cannot find the feature PIE for record %s",  getName( psFeature->pName ) );
+			debug( LOG_ERROR, "Cannot find the feature PIE for record %s",  getName( psFeature->displayName ) );
 			abort();
 			return false;
 		}
@@ -386,10 +386,10 @@ FEATURE * buildFeature(FEATURE_STATS *psStats, UDWORD x, UDWORD y,BOOL FromSave)
 			//check not outside of map - for load save game
 			ASSERT( (mapX+width) < mapWidth,
 				"x coord bigger than map width - %s, id = %d",
-				getName(psFeature->psStats->pName), psFeature->id );
+				getName(psFeature->psStats->uniqueName), psFeature->id );
 			ASSERT( (mapY+breadth) < mapHeight,
 				"y coord bigger than map height - %s, id = %d",
-				getName(psFeature->psStats->pName), psFeature->id );
+				getName(psFeature->psStats->uniqueName), psFeature->id );
 
 			if (width != psStats->baseWidth && breadth != psStats->baseBreadth)
 			{

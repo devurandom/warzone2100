@@ -51,7 +51,7 @@ extern DROID* createDroid(UDWORD player);
 extern void addDroid(DROID *psDroidToAdd, DROID *pList[MAX_PLAYERS]);
 
  /*destroy a droid */
-void killDroid(DROID *psDel);
+extern void killDroid(DROID *psDel);
 
 /* Remove all droids */
 extern void freeAllDroids(void);
@@ -72,7 +72,7 @@ extern STRUCTURE* createStruct(UDWORD player);
  extern void addStructure(STRUCTURE *psStructToAdd);
 
 /* Destroy a structure */
-void killStruct(STRUCTURE *psDel);
+extern void killStruct(STRUCTURE *psDel);
 
 /* Remove all structures */
 extern void freeAllStructs(void);
@@ -85,10 +85,10 @@ extern void removeStructureFromList(STRUCTURE *psStructToRemove,
 extern FEATURE* createFeature(void);
 
 /* add the feature to the Feature Lists */
- extern void addFeature(FEATURE *psFeatureToAdd);
+extern void addFeature(FEATURE *psFeatureToAdd);
 
 /* Destroy a feature */
-void killFeature(FEATURE *psDel);
+extern void killFeature(FEATURE *psDel);
 
 /* Remove all features */
 extern void freeAllFeatures(void);
@@ -109,7 +109,7 @@ extern BOOL checkValidId(UDWORD id);
 
 extern UDWORD getRepairIdFromFlag(FLAG_POSITION *psFlag);
 
-void objCount(int *droids, int *structures, int *features);
+extern void objCount(int *droids, int *structures, int *features);
 
 #ifdef DEBUG
 extern void checkFactoryFlags(void);

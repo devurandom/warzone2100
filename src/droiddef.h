@@ -92,9 +92,6 @@ typedef struct _droid_template
 	// On the PC the pName entry in STATS_BASE is redundant and can be assumed to be NULL,
 	STATS_BASE;						/* basic stats */
 
-	/// on the PC this contains the full editable UTF-8 encoded name of the template
-	char            aName[MAX_STR_LENGTH];
-
 	UBYTE           NameVersion;                //< Version number used in name (e.g. Viper Mk "I" would be stored as 1 - Viper Mk "X" as 10)
 
 	/*!

@@ -477,6 +477,8 @@ static BOOL _intAddDesign( BOOL bShowCentreScreen )
 		sstrcpy(sCurrDesign.aName, aCurrName);
 	}
 
+	strlcpy((char*)sCurrDesign.displayName, aCurrName, sizeof(sCurrDesign.displayName));
+
 	/* Add the design templates form */
 	if (!intAddTemplateForm(psCurrTemplate))
 	{
@@ -1364,7 +1366,7 @@ const char *GetDefaultTemplateName(DROID_TEMPLATE *psTemplate)
 
 	if ( psTemplate->numWeaps > 1 )
 	{
-		sstrcat(aCurrName, "Hydra ");
+		sstrcat(aCurrName, _("Hydra "));
 	}
 
 	psStats = (COMPONENT_STATS *) (asBodyStats + psTemplate->asParts[COMP_BODY]);
@@ -3450,8 +3452,8 @@ BOOL intValidTemplate(DROID_TEMPLATE *psTempl, const char *newName)
 	//set the droidtype
 	psTempl->droidType = droidTemplateType(psTempl);
 
-	/* copy name into template */
-	sstrcpy(psTempl->aName, newName);
+	/* copy current name into template */
+	sstrcpy((char*)sCurrDesign.displayName, aCurrName);
 
 	return true;
 }
@@ -3551,7 +3553,7 @@ void intProcessDesign(UDWORD id)
 			desCreateDefaultTemplate();
 
 			sstrcpy(aCurrName, _("New Vehicle"));
-			sstrcpy(sCurrDesign.aName, aCurrName);
+			sstrcpy((char*)sCurrDesign.displayName, aCurrName);
 
 			/* hide body and system component buttons */
 			widgHide( psWScreen, IDDES_SYSTEMBUTTON );
@@ -3858,7 +3860,7 @@ void intProcessDesign(UDWORD id)
 		/* update name if not customised */
 		if ( bTemplateNameCustomised == false )
 		{
-			sstrcpy(sCurrDesign.aName, GetDefaultTemplateName(&sCurrDesign));
+			sstrcpy((char*)sCurrDesign.displayName, GetDefaultTemplateName(&sCurrDesign));
 		}
 
 		/* Update the name in the edit box */
@@ -4021,7 +4023,7 @@ void intProcessDesign(UDWORD id)
 		/* update name if not customised */
 		if ( bTemplateNameCustomised == false )
 		{
-			sstrcpy(sCurrDesign.aName, GetDefaultTemplateName(&sCurrDesign));
+			sstrcpy((char*)sCurrDesign.displayName, GetDefaultTemplateName(&sCurrDesign));
 		}
 
 		/* Update the name in the edit box */
@@ -4073,8 +4075,8 @@ void intProcessDesign(UDWORD id)
 			break;
 			/* The name edit box */
 		case IDDES_NAMEBOX:
-			sstrcpy(sCurrDesign.aName, widgGetString(psWScreen, IDDES_NAMEBOX));
-			sstrcpy(aCurrName, sCurrDesign.aName);
+			sstrcpy(aCurrName, widgGetString(psWScreen, IDDES_NAMEBOX));
+			sstrcpy((char*)sCurrDesign.displayName, aCurrName);
 			break;
 		case IDDES_BIN:
 			/* Find the template for the current button */
@@ -4727,7 +4729,7 @@ static BOOL saveTemplate(void)
 
 		/* Copy the template */
 		memcpy(psTempl, &sCurrDesign, sizeof(DROID_TEMPLATE));
-		sstrcpy(psTempl->aName, aCurrName);
+		sstrcpy((char*)psTempl->displayName, aCurrName);
 
 		/* Now update the droid template form */
 		widgDelete(psWScreen, IDDES_TEMPLFORM);

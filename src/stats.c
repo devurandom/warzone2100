@@ -325,9 +325,9 @@ BOOL statsAllocConstruct(UDWORD	numStats)
 
 const char *getStatName(const void * Stat)
 {
-	const BASE_STATS * const psStats= (const BASE_STATS*)Stat;
+	const BASE_STATS * psStats = Stat;
 
-	return getName(psStats->pName);
+	return getName(psStats->displayName);
 }
 
 
@@ -794,7 +794,8 @@ BOOL loadBodyStats(const char *pBodyData, UDWORD bufferSize)
 			(int*)&psStats->armourValue[HIT_SIDE_LEFT][WC_KINETIC],  (int*)&psStats->armourValue[HIT_SIDE_LEFT][WC_HEAT],
 			(int*)&psStats->armourValue[HIT_SIDE_RIGHT][WC_KINETIC], (int*)&psStats->armourValue[HIT_SIDE_RIGHT][WC_HEAT],
 			(int*)&psStats->armourValue[HIT_SIDE_TOP][WC_KINETIC],   (int*)&psStats->armourValue[HIT_SIDE_TOP][WC_HEAT],
-			(int*)&psStats->armourValue[HIT_SIDE_BOTTOM][WC_KINETIC],(int*)&psStats->armourValue[HIT_SIDE_BOTTOM][WC_HEAT],
+			(int*)&psStats->armourValue[HIT_SIDE_BOTTOM][WC_KINETIC],
+			(int*)&psStats->armourValue[HIT_SIDE_BOTTOM][WC_HEAT],
 			(char*)&flameIMD, &designable);//, &psStats->armourValue[WC_EXPLOSIVE],
 			//&psStats->armourValue[WC_MISC]);
 
@@ -1473,7 +1474,7 @@ BOOL loadConstructStats(const char *pConstructData, UDWORD bufferSize)
 {
 	const unsigned int NumConstruct = numCR(pConstructData, bufferSize);
 	CONSTRUCT_STATS sStats, * const psStats = &sStats;
-	unsigned int i = 0, designable;
+	unsigned int line = 0, designable;
 	char			ConstructName[MAX_STR_LENGTH], GfxFile[MAX_STR_LENGTH];
 	char			mountGfx[MAX_STR_LENGTH], dummy[MAX_STR_LENGTH];
 	UDWORD dummyVal;
@@ -1483,7 +1484,7 @@ BOOL loadConstructStats(const char *pConstructData, UDWORD bufferSize)
 		return false;
 	}
 
-	for (i=0; i < NumConstruct; i++)
+	for (line = 0; line < NumConstruct; line++)
 	{
 		memset(psStats, 0, sizeof(CONSTRUCT_STATS));
 
@@ -1503,7 +1504,7 @@ BOOL loadConstructStats(const char *pConstructData, UDWORD bufferSize)
 			return false;
 		}
 
-		psStats->ref = REF_CONSTRUCT_START + i;
+		psStats->ref = REF_CONSTRUCT_START + line;
 
 		//set design flag
 		if (designable)
@@ -1548,7 +1549,7 @@ BOOL loadConstructStats(const char *pConstructData, UDWORD bufferSize)
 		}
 
 		//save the stats
-		statsSetConstruct(psStats, i);
+		statsSetConstruct(psStats, line);
 
 		// Set the max stat values for the design screen
 		if (psStats->designable)
@@ -2595,7 +2596,7 @@ SDWORD getCompFromName(UDWORD compType, const char *pName)
 	//find the stat with the same name
 	for(count = 0; count < numStats; count++)
 	{
-		if (!strcmp(pName, psStats->pName))
+		if (!strcmp(pName, psStats->uniqueName))
 		{
 			return count;
 		}
@@ -2616,18 +2617,30 @@ BOOL getResourceName(const char *pName)
 /*return the name to display for the interface - valid for OBJECTS and STATS*/
 const char* getName(const char *pNameID)
 {
-	/* See if the name has a string resource associated with it by trying
-	 * to get the string resource.
+	UDWORD id;
+	char *pName;
+
+	/*
+	 * See if the name has a resource associated with it by trying to get
+	 * the ID for the string
 	 */
-	const char * const name = strresGetString(psStringRes, pNameID);
-	if (!name)
+	if (!strresGetIDNum(psStringRes, pNameID, &id))
 	{
 		debug( LOG_ERROR, "Unable to find string resource for %s", pNameID );
 		abort();
 		return "Name Unknown";
 	}
 
-	return name;
+	//get the string from the id
+	pName = strresGetString(psStringRes, id);
+	if (pName)
+	{
+		return pName;
+	}
+	else
+	{
+		return "Name Unknown";
+	}
 }
 
 /*sets the store to the body size based on the name passed in - returns false

@@ -215,7 +215,18 @@ void combFire(WEAPON *psWeap, BASE_OBJECT *psAttacker, BASE_OBJECT *psTarget, in
 		{
 			// Can't see the target - can't hit it with direct fire
 			objTrace(psAttacker->id, "combFire(%u[%s]->%u): Tall object has no direct line of sight to target",
-			      psAttacker->id, psStats->pName, psTarget->id);
+			      psAttacker->id, psStats->uniqueName, psTarget->id);
+			return;
+		}
+	}
+	else
+	{
+		// Indirect fire
+		if (!psTarget->visible[psAttacker->player])
+		{
+			// Can't get an indirect LOS - can't hit it with the weapon
+			objTrace(psAttacker->id, "combFire(%u[%s]->%u): Object has no indirect sight of target",
+			      psAttacker->id, psStats->uniqueName, psTarget->id);
 			return;
 		}
 	}
@@ -260,7 +271,7 @@ void combFire(WEAPON *psWeap, BASE_OBJECT *psAttacker, BASE_OBJECT *psTarget, in
 	else
 	{
 		/* Out of range */
-		objTrace(psAttacker->id, "combFire(%u[%s]->%u): Out of range", psAttacker->id, psStats->pName, psTarget->id);
+		objTrace(psAttacker->id, "combFire(%u[%s]->%u): Out of range", psAttacker->id, psStats->uniqueName, psTarget->id);
 		return;
 	}
 
@@ -402,8 +413,7 @@ void combFire(WEAPON *psWeap, BASE_OBJECT *psAttacker, BASE_OBJECT *psTarget, in
 	}
 
 	objTrace(psAttacker->id, "combFire: %u[%s]->%u: resultHitChance=%d, visibility=%hhu : ",
-	      psAttacker->id, psStats->pName, psTarget->id, resultHitChance, psTarget->visible[psAttacker->player]);
-
+	      psAttacker->id, psStats->uniqueName, psTarget->id, resultHitChance, psTarget->visible[psAttacker->player]);
 	return;
 
 missed:

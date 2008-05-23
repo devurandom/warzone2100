@@ -1666,17 +1666,17 @@ BOOL loadDroidTemplates(const char *pDroidData, UDWORD bufferSize)
 		sscanf(pDroidData, "%[^','],%d,%n", componentName, &pDroidDesign->multiPlayerID, &cnt);
 		pDroidData += cnt;
 
-		// Store unique name in pName
-		pDroidDesign->pName = strdup(componentName);
+		// Store unique name in uniqueName
+		pDroidDesign->uniqueName = strdup(componentName);
 
-		// Store translated name in aName
+		// Store translated name in displayName
 		if (!getDroidResourceName(componentName))
 		{
 			free(pDroidDesign->pName);
 			free(pDroidDesign);
 			return false;
 		}
-		sstrcpy(pDroidDesign->aName, componentName);
+		sstrcpy((char*)pDroidDesign->displayName, componentName);
 
 		//read in Body Name
 		sscanf(pDroidData, "%[^','],%n", componentName, &cnt);
@@ -1690,27 +1690,19 @@ BOOL loadDroidTemplates(const char *pDroidData, UDWORD bufferSize)
 		else
 		{
 			COMPONENT_STATS *pStats = (COMPONENT_STATS *)asBodyStats;
-			const size_t size = sizeof(BODY_STATS);
 			unsigned int inc = 0;
 			BOOL found = false;
-
-			if (!getResourceName(componentName))
-			{
-				free(pDroidDesign->pName);
-				free(pDroidDesign);
-				return false;
-			}
 
 			for (inc = 0; inc < numBodyStats; inc++)
 			{
 				//compare the names
-				if (!strcmp(componentName, pStats->pName))
+				if (!strcmp(componentName, pStats->uniqueName))
 				{
 					pDroidDesign->asParts[COMP_BODY] = inc;
 					found = true;
 					break;
 				}
-				pStats = ((COMPONENT_STATS*)((UBYTE*)pStats + size));
+				pStats = ((COMP_BASE_STATS*)((UBYTE*)pStats + sizeof(BODY_STATS)));
 			}
 			if (!found)
 			{
@@ -1733,28 +1725,20 @@ BOOL loadDroidTemplates(const char *pDroidData, UDWORD bufferSize)
 		}
 		else
 		{
-			COMPONENT_STATS *pStats = (COMPONENT_STATS *)asBrainStats;
-			const size_t size = sizeof(BRAIN_STATS);
+			COMP_BASE_STATS *pStats = (COMP_BASE_STATS *)asBrainStats;
 			unsigned int inc = 0;
 			BOOL found = false;
-
-			if (!getResourceName(componentName))
-			{
-				free(pDroidDesign->pName);
-				free(pDroidDesign);
-				return false;
-			}
 
 			for (inc=0; inc < numBrainStats; inc++)
 			{
 				//compare the names
-				if (!strcmp(componentName, pStats->pName))
+				if (!strcmp(componentName, pStats->uniqueName))
 				{
 					pDroidDesign->asParts[COMP_BRAIN] = inc;
 					found = true;
 					break;
 				}
-				pStats = ((COMPONENT_STATS*)((UBYTE*)pStats + size));
+				pStats = ((COMP_BASE_STATS*)((UBYTE*)pStats + sizeof(BRAIN_STATS)));
 			}
 			if (!found)
 			{
@@ -1778,27 +1762,20 @@ BOOL loadDroidTemplates(const char *pDroidData, UDWORD bufferSize)
 		}
 		else
 		{
-			COMPONENT_STATS *pStats = (COMPONENT_STATS *)asConstructStats;
-			const size_t size = sizeof(CONSTRUCT_STATS);
+			COMP_BASE_STATS *pStats = (COMP_BASE_STATS *)asConstructStats;
 			unsigned int inc = 0;
 			BOOL found = false;
 
-			if (!getResourceName(componentName))
-			{
-				free(pDroidDesign->pName);
-				free(pDroidDesign);
-				return false;
-			}
 			for (inc=0; inc < numConstructStats; inc++)
 			{
 				//compare the names
-				if (!strcmp(componentName, pStats->pName))
+				if (!strcmp(componentName, pStats->uniqueName))
 				{
 					pDroidDesign->asParts[COMP_CONSTRUCT] = inc;
 					found = true;
 					break;
 				}
-				pStats = ((COMPONENT_STATS*)((UBYTE*)pStats + size));
+				pStats = ((COMP_BASE_STATS*)((UBYTE*)pStats + sizeof(CONSTRUCT_STATS)));
 			}
 			if (!found)
 			{
@@ -1821,27 +1798,20 @@ BOOL loadDroidTemplates(const char *pDroidData, UDWORD bufferSize)
 		}
 		else
 		{
-			COMPONENT_STATS *pStats = (COMPONENT_STATS *)asECMStats;
-			const size_t size = sizeof(ECM_STATS);
+			COMP_BASE_STATS *pStats = (COMP_BASE_STATS *)asECMStats;
 			unsigned int inc = 0;
 			BOOL found = false;
 
-			if (!getResourceName(componentName))
-			{
-				free(pDroidDesign->pName);
-				free(pDroidDesign);
-				return false;
-			}
 			for (inc=0; inc < numECMStats; inc++)
 			{
 				//compare the names
-				if (!strcmp(componentName, pStats->pName))
+				if (!strcmp(componentName, pStats->uniqueName))
 				{
 					pDroidDesign->asParts[COMP_ECM] = inc;
 					found = true;
 					break;
 				}
-				pStats = ((COMPONENT_STATS*)((UBYTE*)pStats + size));
+				pStats = ((COMP_BASE_STATS*)((UBYTE*)pStats + sizeof(ECM_STATS)));
 			}
 			if (!found)
 			{
@@ -1857,15 +1827,6 @@ BOOL loadDroidTemplates(const char *pDroidData, UDWORD bufferSize)
 		sscanf(pDroidData, "%d,%n", &player,&cnt);
 		pDroidData += cnt;
 
-		if (getTemplateFromUniqueName(pDroidDesign->pName, player))
-		{
-			debug( LOG_ERROR, "Duplicate template %s", pDroidDesign->pName );
-			abort();
-			free(pDroidDesign->pName);
-			free(pDroidDesign);
-			return false;
-		}
-
 		//read in Propulsion Name
 		sscanf(pDroidData, "%[^','],%n", componentName, &cnt);
 		pDroidData += cnt;
@@ -1877,27 +1838,20 @@ BOOL loadDroidTemplates(const char *pDroidData, UDWORD bufferSize)
 		}
 		else
 		{
-			COMPONENT_STATS *pStats = (COMPONENT_STATS *)asPropulsionStats;
-			const size_t size = sizeof(PROPULSION_STATS);
+			COMP_BASE_STATS *pStats = (COMP_BASE_STATS *)asPropulsionStats;
 			unsigned int inc = 0;
 			BOOL found = false;
 
-			if (!getResourceName(componentName))
-			{
-				free(pDroidDesign->pName);
-				free(pDroidDesign);
-				return false;
-			}
 			for (inc=0; inc < numPropulsionStats; inc++)
 			{
 				//compare the names
-				if (!strcmp(componentName, pStats->pName))
+				if (!strcmp(componentName, pStats->uniqueName))
 				{
 					pDroidDesign->asParts[COMP_PROPULSION] = inc;
 					found = true;
 					break;
 				}
-				pStats = ((COMPONENT_STATS*)((UBYTE*)pStats + size));
+				pStats = ((COMP_BASE_STATS*)((UBYTE*)pStats + sizeof(PROPULSION_STATS)));
 			}
 			if (!found)
 			{
@@ -1920,27 +1874,20 @@ BOOL loadDroidTemplates(const char *pDroidData, UDWORD bufferSize)
 		}
 		else
 		{
-			COMPONENT_STATS *pStats = (COMPONENT_STATS *)asRepairStats;
-			const size_t size = sizeof(REPAIR_STATS);
+			COMP_BASE_STATS *pStats = (COMP_BASE_STATS *)asRepairStats;
 			unsigned int inc = 0;
 			BOOL found = false;
 
-			if (!getResourceName(componentName))
-			{
-				free(pDroidDesign->pName);
-				free(pDroidDesign);
-				return false;
-			}
 			for (inc=0; inc < numRepairStats; inc++)
 			{
 				//compare the names
-				if (!strcmp(componentName, pStats->pName))
+				if (!strcmp(componentName, pStats->uniqueName))
 				{
 					pDroidDesign->asParts[COMP_REPAIRUNIT] = inc;
 					found = true;
 					break;
 				}
-				pStats = ((COMPONENT_STATS*)((UBYTE*)pStats + size));
+				pStats = ((COMP_BASE_STATS*)((UBYTE*)pStats + sizeof(REPAIR_STATS)));
 			}
 			if (!found)
 			{
@@ -1997,32 +1944,24 @@ BOOL loadDroidTemplates(const char *pDroidData, UDWORD bufferSize)
 		}
 		else
 		{
-			COMPONENT_STATS *pStats = (COMPONENT_STATS *)asSensorStats;
-			const size_t size = sizeof(SENSOR_STATS);
+			COMP_BASE_STATS *pStats = (COMP_BASE_STATS *)asSensorStats;
 			unsigned int inc = 0;
 			BOOL found = false;
-
-			if (!getResourceName(componentName))
-			{
-				free(pDroidDesign->pName);
-				free(pDroidDesign);
-				return false;
-			}
 
 			for (inc=0; inc < numSensorStats; inc++)
 			{
 				//compare the names
-				if (!strcmp(componentName, pStats->pName))
+				if (!strcmp(componentName, pStats->uniqueName))
 				{
 					pDroidDesign->asParts[COMP_SENSOR] = inc;
 					found = true;
 					break;
 				}
-				pStats = ((COMPONENT_STATS*)((UBYTE*)pStats + size));
+				pStats = ((COMP_BASE_STATS*)((UBYTE*)pStats + sizeof(SENSOR_STATS)));
 			}
 			if (!found)
 			{
-				debug( LOG_ERROR, "Sensor not found for droid Template: %s", pDroidDesign->aName );
+				debug( LOG_ERROR, "Sensor not found for droid Template: %s", pDroidDesign->uniqueName );
 				abort();
 				free(pDroidDesign->pName);
 				free(pDroidDesign);
@@ -2035,13 +1974,19 @@ BOOL loadDroidTemplates(const char *pDroidData, UDWORD bufferSize)
 		//check that not allocating more weapons than allowed
 		if (pDroidDesign->numWeaps > DROID_MAXWEAPS)
 		{
-			debug( LOG_ERROR, "Too many weapons have been allocated for droid Template: %s", pDroidDesign->aName );
+			debug( LOG_ERROR, "Too many weapons have been allocated for droid Template: %s", pDroidDesign->uniqueName );
 			abort();
 			free(pDroidDesign->pName);
 			free(pDroidDesign);
 			return false;
 		}
 
+		if (getTemplateFromUniqueName(pDroidDesign->uniqueName, player))
+		{
+			debug( LOG_ERROR, "Duplicate template %s", pDroidDesign->uniqueName );
+			abort();
+			return FALSE;
+		}
 
 		pDroidDesign->ref = REF_TEMPLATE_START + line;
 /*	Loaded in from the database now AB 29/10/98
@@ -2237,7 +2182,8 @@ BOOL loadDroidWeapons(const char *pWeaponData, UDWORD bufferSize)
 			/* if Template not found - try default design */
 			if (!pTemplate)
 			{
-				if (strcmp(TemplateName, sDefaultDesignTemplate.pName) == 0)
+				pTemplate = &sDefaultDesignTemplate;
+				if ( strcmp(TemplateName, pTemplate->uniqueName) != 0 )
 				{
 					pTemplate = &sDefaultDesignTemplate;
 				}
@@ -2253,14 +2199,7 @@ BOOL loadDroidWeapons(const char *pWeaponData, UDWORD bufferSize)
 
 			for (j = 0; j < pTemplate->numWeaps; j++)
 			{
-				int incWpn;
-
-				if (!getResourceName(WeaponName[j]))
-				{
-					return false;
-				}
-
-				incWpn = getCompFromName(COMP_WEAPON, WeaponName[j]);
+				int incWpn = getCompFromName(COMP_WEAPON, WeaponName[j]);
 
 				//if weapon not found - error
 				if (incWpn == -1)
@@ -2285,7 +2224,7 @@ BOOL loadDroidWeapons(const char *pWeaponData, UDWORD bufferSize)
 					//check valid weapon/propulsion
 					if (!checkValidWeaponForProp(pTemplate))
 					{
-						debug( LOG_ERROR, "Weapon is invalid for air propulsion for template %s", pTemplate->aName );
+						debug( LOG_ERROR, "Weapon is invalid for air propulsion for template %s", pTemplate->uniqueName );
 						abort();
 
 						return false;
@@ -2325,16 +2264,12 @@ BOOL droidTemplateShutDown(void)
 		for (pTemplate = apsDroidTemplates[player]; pTemplate != NULL; pTemplate = pNext)
 		{
 			pNext = pTemplate->psNext;
-			ASSERT(sDefaultDesignTemplate.pName != pTemplate->pName, "We'll soon be getting a double free()!!!");
-			if (pTemplate->pName != sDefaultDesignTemplate.pName)
-			{
-				free(pTemplate->pName);
-			}
+			free((char*)pTemplate->uniqueName);
 			free(pTemplate);
 		}
 		apsDroidTemplates[player] = NULL;
 	}
-	free(sDefaultDesignTemplate.pName);
+	free((char*)sDefaultDesignTemplate.uniqueName);
 	sDefaultDesignTemplate.pName = NULL;
 
 	return true;
@@ -2643,8 +2578,7 @@ DROID* buildDroid(DROID_TEMPLATE *pTemplate, UDWORD x, UDWORD y, UDWORD player,
 	psDroid->sMove.asPath = NULL;
 
 	//fill in other details
-
-	droidSetName(psDroid, pTemplate->aName);
+	droidSetName(psDroid, pTemplate->displayName);
 
 	// Set the droids type
 	psDroid->droidType = droidTemplateType(pTemplate);
@@ -3297,7 +3231,7 @@ DROID_TEMPLATE * getTemplateFromUniqueName(const char *pName, unsigned int playe
 
 	for (psCurr = apsDroidTemplates[player]; psCurr != NULL; psCurr = psCurr->psNext)
 	{
-		if (strcmp(psCurr->pName, pName) == 0)
+		if (strcmp(psCurr->uniqueName, pName) == 0)
 		{
 			return psCurr;
 		}
@@ -3315,7 +3249,7 @@ DROID_TEMPLATE * getTemplateFromUniqueName(const char *pName, unsigned int playe
  * \post pName will be translated via getDroidResourceName()!
  * \warning IF YOU USE THIS FUNCTION - NOTE THAT selectedPlayer's TEMPLATES ARE NOT USED!!!!
  */
-DROID_TEMPLATE * getTemplateFromTranslatedNameNoPlayer(char *pName)
+DROID_TEMPLATE * getTemplateFromDisplayNameNoPlayer(char *pName)
 {
 	unsigned int player;
 
@@ -3333,7 +3267,7 @@ DROID_TEMPLATE * getTemplateFromTranslatedNameNoPlayer(char *pName)
 		// selectedPlayer's templates because we cannot guarentee they will exist!
 		for (psCurr = apsDroidTemplates[player]; psCurr != NULL; psCurr = psCurr->psNext)
 		{
-			if (strcmp(psCurr->aName, pName) == 0)
+			if (strcmp(psCurr->displayName, pName) == 0)
 			{
 				//if template is selectedPlayers' it must be a CYBORG or we ignore it
 				if (!bMultiPlayer
@@ -3522,7 +3456,7 @@ const char *droidGetName(const DROID *psDroid)
 //
 // - only possible on the PC where you can adjust the names,
 //
-void droidSetName(DROID *psDroid,const char *pName)
+void droidSetName(DROID *psDroid, const char *pName)
 {
 	sstrcpy(psDroid->aName, pName);
 }
@@ -3874,8 +3808,31 @@ const char *getDroidName(const DROID *psDroid)
 
 const char* getTemplateName(const DROID_TEMPLATE *psTemplate)
 {
-	return psTemplate->aName;
+	const char *pNameID = psTemplate->displayName;
+	UDWORD id;
+
+	/*see if the name has a resource associated with it by trying to get
+	the ID for the string*/
+	if (strresGetIDNum(psStringRes, pNameID, &id))
+	{
+		//get the string from the id
+		const char *pName = strresGetString(psStringRes, id);
+		if (pName)
+		{
+			return pName;
+		}
+	}
+	//if haven't found a resource, return the name passed in
+	return pNameID;
 }
+
+
+// const char *getTranslatedString(const char* input)
+// {
+//
+// }
+
+
 
 /* Just returns true if the droid's present body points aren't as high as the original*/
 BOOL	droidIsDamaged(DROID *psDroid)
@@ -4497,7 +4454,8 @@ DROID * giftSingleDroid(DROID *psD, UDWORD to)
 		templateSetParts(psD, &sTemplate);
 
 		// copy the name across
-		sstrcpy(sTemplate.aName, psD->aName);
+		sstrcpy((char*)sTemplate.displayName, psD->aName);
+		sTemplate.uniqueName = NULL;
 
 		x = psD->pos.x;
 		y = psD->pos.y;

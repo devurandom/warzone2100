@@ -238,10 +238,10 @@ extern BOOL activateGroupAndMove(UDWORD playerNumber, UDWORD groupNumber);
 /* calculate muzzle tip location in 3d world added int weapon_slot to fix the always slot 0 hack*/
 extern BOOL calcDroidMuzzleLocation(DROID *psDroid, Vector3f *muzzle, int weapon_slot);
 
-/* gets a template from its name - relies on the name being unique */
+/* gets a template from its unique name - relies on the name being unique */
 extern DROID_TEMPLATE * getTemplateFromUniqueName(const char *pName, unsigned int player);
-/* gets a template from its name - relies on the name being unique */
-extern DROID_TEMPLATE* getTemplateFromTranslatedNameNoPlayer(char *pName);
+/* gets a template from its displayed, translated name - relies on the name being unique */
+extern DROID_TEMPLATE* getTemplateFromDisplayNameNoPlayer(char *pName);
 /*getTemplateFromSinglePlayerID gets template for unique ID  searching one players list */
 extern DROID_TEMPLATE* getTemplateFromSinglePlayerID(UDWORD multiPlayerID, UDWORD player);
 /*getTemplateFromMultiPlayerID gets template for unique ID  searching all lists */

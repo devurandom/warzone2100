@@ -516,7 +516,7 @@ var_init:		var_entry TYPE var_value
 							yyerror("Typemismatch for variable %d", $1);
 							YYABORT;
 						}
-						data.v.oval = getTemplateFromTranslatedNameNoPlayer($3.pString);	/* store pointer to the template */
+						data.v.oval = getTemplateFromDisplayNameNoPlayer($3.pString);	/* store pointer to the template */
 						if (data.v.oval == NULL)
 						{
 							yyerror("Template %s not found", $3.pString);
