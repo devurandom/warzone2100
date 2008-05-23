@@ -1,7 +1,22 @@
-// Written by Per I Mathisen, 2007
-// Released into the public domain, no rights reserved.
-// ANSI C + stdint.h
-//
+/*
+	This file is part of Warzone 2100.
+	Public Domain 2007  Per I. Mathisen (no rights reserved)
+	Copyright (C) 2008  Dennis Schridde
+
+	Warzone 2100 is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	Warzone 2100 is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Warzone 2100; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
 // See header file for documentation.
 #include "tagfile.h"
 
@@ -25,16 +40,19 @@ enum internal_types
 	TF_INT_S32_ARRAY
 };
 
+typedef struct define_t define_t;
+
+
 // A definition group
-typedef struct _define
+struct definitionNode_t
 {
-	unsigned int vm; //! value multiple
 	element_t element; //! tag number
-	char vr[2]; //! value representation (type)
-	struct _define *parent;	//! parent group
-	struct _define *group;	//! child group
-	struct _define *next;	//! sibling group
-	struct _define *current; //! where in the sibling list we currently are
+	unsigned int multiplicity; //! value multiple
+	const char representation[2]; //! value representation (type)
+	definitionNode_t *parent;	//! parent group
+	definitionNode_t *group;	//! child group
+	definitionNode_t *next;	//! sibling group
+	definitionNode_t *current; //! where in the sibling list we currently are
 	bool defaultval; //! default value
 	union {
 		uint32_t uint32_tval;
@@ -44,7 +62,22 @@ typedef struct _define
 	// debugging temp variables below
 	int countItems; // check group items against number of separators given
 	int expectedItems; // group items expected in current group
-} define_t;
+};
+
+
+struct tagfile_t
+{
+	bool tag_error;
+	bool readmode;
+	define_t *first;
+	define_t *current;
+	const char *bufptr;
+	PHYSFS_file *file;
+	unsigned int line;
+	int lastAccess;
+	const char definitionName[PATH_MAX];
+	const char tagfileName[PATH_MAX];
+};
 
 
 static bool tag_error = false;		// are we in an error condition?
@@ -133,8 +166,39 @@ void tf_print_nested_groups(unsigned int level, define_t *group)
 }
 
 
+unsigned int skip_blanklines(const char** buffer)
+{
+	const char * bufptr = *buffer;
+	unsigned int line = 0;
+
+	// check line endings and remove whitespace
+	while (*bufptr == '\n' || *bufptr == '\r' ||
+		*bufptr == ' ' || *bufptr == '\t' ||
+		*bufptr == '#')
+	{
+		if (*bufptr == '\n')
+		{
+			line++;
+		}
+		if (*bufptr == '#')
+		{
+			while (*bufptr != '\n' && *bufptr != '\0')
+			{
+				bufptr++; // discard rest of line
+			}
+			line++;
+		}
+		bufptr++;
+	}
+
+	*buffer = bufptr; // write back buffer position
+
+	return line;
+}
+
+
 // scan one definition group from definition file; returns true on success
-static bool scan_defines(define_t *node, define_t *group)
+static bool scan_defines(tagfile_t *tagfile, define_t *node, define_t *group)
 {
 	bool group_end = false;
 
@@ -153,31 +217,9 @@ static bool scan_defines(define_t *node, define_t *group)
 		node->element = 0xFF;
 		node->expectedItems = 0;
 		node->countItems = 0;
-		current = node; // for accurate error reporting
+		tagfile->current = node; // for accurate error reporting
 
-		// check line endings
-		while (*bufptr == '\n' || *bufptr == '\r')
-		{
-			if (*bufptr == '\n')
-			{
-				line++;
-			}
-			bufptr++;
-		}
-		// remove whitespace
-		while (*bufptr == ' ' || *bufptr == '\t')
-		{
-			bufptr++;
-		}
-		// check if # comment line or whitespace
-		if (*bufptr == '#' || *bufptr == '\0')
-		{
-			while (*bufptr != '\n' && *bufptr != '\0')
-			{
-				bufptr++; // discard rest of line
-			}
-			continue; // check empty lines and whitespace again
-		}
+		tagfile->line += skip_blanklines(bufptr);
 
 		retval = sscanf(bufptr, "%x %2s %u%n", &readelem, (char *)&vr, &node->vm, &count);
 		node->element = readelem;
@@ -198,7 +240,8 @@ static bool scan_defines(define_t *node, define_t *group)
 		{
 			retval = sscanf(bufptr, " %d", &node->val.int32_tval);
 		}
-		else if ((node->vr[0] == 'U' && node->vr[1] == 'S') || (node->vr[0] == 'B' && node->vr[1] == 'O'))
+		else if ((node->vr[0] == 'U' && node->vr[1] == 'I') ||
+			(node->vr[0] == 'B' && node->vr[1] == 'O'))
 		{
 			retval = sscanf(bufptr, " %u", &node->val.uint32_tval);
 		}
@@ -253,23 +296,35 @@ static bool scan_defines(define_t *node, define_t *group)
 
 static bool init(const char *definition, const char *datafile, bool write)
 {
-	PHYSFS_file *fp;
+	tagfile_t *tagfile = malloc(sizeof(*tagfile));
 	PHYSFS_sint64 fsize, fsize2;
 	char *buffer;
 
-	tag_error = false;
-	line = 1;
-	fp = PHYSFS_openRead(definition);
+	if (!tagfile)
+	{
+		debug(LOG_ERROR, "tagfile:init(): Out of memory");
+		abort();
+		return false;
+	}
+
+	tagfile->tag_error = false;
+	tagfile->line = 1;
+	tagfile->file = PHYSFS_openRead(definition);
+
 	debug(LOG_WZ, "Reading...[directory: %s] %s", PHYSFS_getRealDir(definition), definition);
 	sstrcpy(saveDefine, definition);
 	sstrcpy(saveTarget, datafile);
-	if (!fp)
+
+	if (!tagfile->file)
 	{
 		TF_ERROR("Error opening definition file %s: %s", definition, PHYSFS_getLastError());
 		return false;
 	}
 
-	fsize = PHYSFS_fileLength(fp);
+	strlcpy((char*)tagfile->saveDefine, definition, sizeof(saveDefine));
+	strlcpy((char*)tagfile->saveTarget, datafile, sizeof(saveTarget));
+
+	fsize = PHYSFS_fileLength(tagfile->file);
 	assert(fsize > 0);
 
 	buffer = bufptr = malloc(fsize + 1);
@@ -491,7 +546,7 @@ static bool scanforward(element_t tag)
 		case TF_INT_U32:
 		case TF_INT_S32_ARRAY:
 		case TF_INT_S32: fpos += 4 * array_size; break;
-		case TF_INT_GROUP: 
+		case TF_INT_GROUP:
 			fpos += 2;
 			groupskip++;
 #ifdef DEBUG_TAGFILE

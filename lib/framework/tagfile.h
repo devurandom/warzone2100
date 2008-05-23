@@ -33,7 +33,10 @@
 
 #include "lib/framework/types.h"
 
+
 typedef uint8_t element_t;
+typedef struct tagfile_t tagfile_t;
+
 
 /** Open definition file and data file; return true if successful. */
 bool tagOpenWrite(const char *definition, const char *datafile);
