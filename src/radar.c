@@ -485,8 +485,8 @@ static void RotateVector2D(Vector3i *Vector, Vector3i *TVector, Vector3i *Pos, i
 
 	for (i = 0; i < Count; i++)
 	{
-		TVec->x = ( (Vec->x*Cos + Vec->y*Sin) >> FP12_SHIFT ) + ox;
-		TVec->y = ( (Vec->y*Cos - Vec->x*Sin) >> FP12_SHIFT ) + oy;
+		TVec->x = Vec->x*Cos + Vec->y*Sin + ox;
+		TVec->y = Vec->y*Cos - Vec->x*Sin + oy;
 		Vec++;
 		TVec++;
 	}

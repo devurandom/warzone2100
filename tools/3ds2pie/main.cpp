@@ -29,8 +29,8 @@ int main(int argc, char *argv[])
 	appTranslator.load("3ds2pie_gui_" + QLocale::system().name());
 	app.installTranslator(&appTranslator);
 
-	Gui3ds2pie * dialog = new Gui3ds2pie();
-	dialog->show();
+	Gui3ds2pie dialog;
+	dialog.show();
 	return app.exec();
 }
 

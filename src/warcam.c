@@ -719,7 +719,7 @@ static void updateCameraAcceleration(UBYTE update)
 		trackingCamera.target->pos.z,
 		trackingCamera.target->pos.y
 	};
-	Vector2i behind = {0, 0}; /* Irrelevant for normal radar tracking */
+	Vector2f behind = {0.0f, 0.0f}; /* Irrelevant for normal radar tracking */
 	BOOL bFlying = false;
 
 	/*
@@ -761,13 +761,13 @@ static void updateCameraAcceleration(UBYTE update)
 				getGroupTrackingConcerns(&concern.x, &concern.y, &concern.z, trackingCamera.target->group, true);
 			}
 
-			behind.x = ( CAM_DEFAULT_Y_OFFSET * SIN( DEG(multiAngle) ) ) >> FP12_SHIFT;
-			behind.y = ( CAM_DEFAULT_X_OFFSET * COS( DEG(multiAngle) ) ) >> FP12_SHIFT;
+			behind.x = CAM_DEFAULT_Y_OFFSET * SIN( DEG(multiAngle) );
+			behind.y = CAM_DEFAULT_X_OFFSET * COS( DEG(multiAngle) );
 		}
 		else
 		{
-		 	behind.x = ( CAM_DEFAULT_Y_OFFSET * SIN( DEG( trackingCamera.target->direction ) ) ) >> FP12_SHIFT;
-			behind.x = ( CAM_DEFAULT_X_OFFSET * COS( DEG( trackingCamera.target->direction ) ) ) >> FP12_SHIFT;
+			behind.x = CAM_DEFAULT_Y_OFFSET * SIN( DEG( trackingCamera.target->direction ) );
+			behind.y = CAM_DEFAULT_X_OFFSET * COS( DEG( trackingCamera.target->direction ) );
 		}
 
 		concern.y += angle*5;

@@ -54,7 +54,7 @@
 //scale depth = 1<<FP12_SHIFT>>STRETCHED_Z_SHIFT<<xpshift
 // Gerard - HACK Multiplied by 7 to fix clipping
 // someone needs to take a good look at the radius calculation
-#define SCALE_DEPTH (FP12_MULTIPLIER*7)
+#define SCALE_DEPTH 7.0f
 
 typedef struct _tile_bucket
 {

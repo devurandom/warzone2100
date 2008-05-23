@@ -63,7 +63,7 @@ static void calcTileIllum(UDWORD tileX, UDWORD tileY);
 
 void setTheSun(Vector3f newSun)
 {
-	theSun = Vector3f_Mult(Vector3f_Normalise(newSun), FP12_MULTIPLIER);
+	theSun = Vector3f_Normalise(newSun);
 }
 
 Vector3f getTheSun(void)

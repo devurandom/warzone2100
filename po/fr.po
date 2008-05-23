@@ -26,6 +26,7 @@ msgstr ""
 "X-Poedit-Language: French\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: ..\n"
+"X-Poedit-Country: FRANCE\n"
 
 #: data/base/messages/messages.rmsg:4
 msgid "Structure Research Completed"

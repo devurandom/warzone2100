@@ -280,13 +280,13 @@ static BOOL ReadPoints( const char **ppFileData, iIMDShape *s )
 static BOOL _imd_load_points( const char **ppFileData, iIMDShape *s )
 {
 	Vector3f *p = NULL;
-	Sint32 tempXMax, tempXMin, tempZMax, tempZMin;
+	float tempXMax = -1.0f, tempXMin = 1.0f, tempZMax = -1.0f, tempZMin = 1.0f;
 	Sint32 xmax, ymax, zmax;
 	double dx, dy, dz, rad_sq, rad, old_to_p_sq, old_to_p, old_to_new;
 	double xspan, yspan, zspan, maxspan;
 	Vector3f dia1, dia2, cen;
-	Vector3f vxmin = { 0, 0, 0 }, vymin = { 0, 0, 0 }, vzmin = { 0, 0, 0 },
-	         vxmax = { 0, 0, 0 }, vymax = { 0, 0, 0 }, vzmax = { 0, 0, 0 };
+	Vector3f vxmin = { 1.0f, 0.0f, 0.0f }, vymin = { 0.0f, 1.0f, 0.0f }, vzmin = { 0.0f, 0.0f, 1.0f },
+	         vxmax = { -1.0f, 0.0f, 0.0f }, vymax = { 0.0f, -1.0f, 0.0f }, vzmax = { 0.0f, 0.0f, -1.0f };
 
 	//load the points then pass through a second time to setup bounding datavalues
 	s->points = (Vector3f*)malloc(sizeof(Vector3f) * s->npoints);
@@ -303,11 +303,8 @@ static BOOL _imd_load_points( const char **ppFileData, iIMDShape *s )
 		return false;
 	}
 
-	s->max.x = s->max.y = s->max.z = tempXMax = tempZMax = -FP12_MULTIPLIER;
-	s->min.x = s->min.y = s->min.z = tempXMin = tempZMin = FP12_MULTIPLIER;
-
-	vxmax.x = vymax.y = vzmax.z = -FP12_MULTIPLIER;
-	vxmin.x = vymin.y = vzmin.z = FP12_MULTIPLIER;
+	Vector3f_Set(&s->max, -1.0f, -1.0f, -1.0f);
+	Vector3f_Set(&s->min, 1.0f, 1.0f, 1.0f);
 
 	// set up bounding data for minimum number of vertices
 	for (p = s->points; p < s->points + s->npoints; p++)
