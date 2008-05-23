@@ -61,7 +61,7 @@ def fs_callback(ui, filepath, levels, connectors):
 	if len(texture): texture = texture[0]
 	else: texture = levels[0].getData(mesh=1).faces[0].image
 	if texture:
-		texturename = os.path.basename(texture.getFilename())
+		texturename = os.path.basename(texture.name)
 		if texturename.count('.') is not 1:
 			ui.debug("texture names in warzone can only have one period. " + filepath, 'error')
 	else:
@@ -89,13 +89,13 @@ def fs_callback(ui, filepath, levels, connectors):
 			line_buffer = str(len(face.verts))
 			line_buffer += ''.join([" " + str(vert.index) for vert in face.verts])
 			flags = 0
-			mesh.activeUVLayer = "teamcolor_meta"
-			meta = get_teamcolor_meta(face.uv)
+			#mesh.activeUVLayer = "teamcolor_meta"
+			#meta = get_teamcolor_meta(face.uv)
 			mesh.activeUVLayer = "base"
-			if meta:
-				ui.debug("teamcolor meta: " + repr(meta))
-				line_buffer += (" %i %i" + uv_format) % tuple(meta)
-				flags |= 0x4000
+			#if meta:
+			#	ui.debug("teamcolor meta: " + repr(meta))
+			#	line_buffer += (" %i %i" + uv_format) % tuple(meta)
+			#	flags |= 0x4000
 			if face.mode & Blender.Mesh.FaceModes['TWOSIDE']:
 				flags |= 0x2000
 			if face.transp == Blender.Mesh.FaceTranspModes['ALPHA']:
