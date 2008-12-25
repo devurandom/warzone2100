@@ -4,21 +4,18 @@
 
 # Warzone 2100
 
+import Utils, Build
+
 # the following two variables are used by the target "waf dist"
 VERSION='TRUNK'
 APPNAME='Warzone 2100'
 
 # these variables are mandatory ('/' are converted automatically)
 srcdir = '.'
-blddir = '_build_'
+blddir = 'build'
 
 # make sure waf has the version we want
-import Utils
-Utils.waf_version(mini="1.0", maxi="9.9.9")
-
-
-# For DEFAULT_DATADIR and debug variant
-import Params
+Utils.waf_version(mini="1.5.0", maxi="1.5.9")
 
 
 def set_options(opt):
@@ -33,10 +30,7 @@ def set_options(opt):
 
 def configure(conf):
 	# Check for C-Compiler, the Lexer/Parser tools and get the checks module for checkEndian
-	conf.check_tool('compiler_cc batched_cc flex bison checks')
-
-	# Big or little endian?
-	conf.checkEndian()
+	conf.check_tool('compiler_cc flex bison')
 
 	# Check for all required libs
 	if not conf.check_pkg2('sdl', '1.2', 0):
@@ -75,7 +69,6 @@ def configure(conf):
 
 	# Common defines
 	conf.add_define('VERSION', VERSION)
-	conf.add_define('DEFAULT_DATADIR', Params.g_options.prefix + 'warzone2100')
 	conf.add_define('YY_STATIC', 1)
 	conf.add_define('LOCALEDIR', '')
 	conf.add_define('PACKAGE', 'warzone2100')
@@ -104,7 +97,3 @@ def build(bld):
 	obj.includes='lib/framework lib/gamelib lib/script src'
 	obj.defines='HAVE_CONFIG_H'
 	obj.target='warzone2100'
-
-	# Use debug environment when --enable-debug is given
-	if Params.g_options.debug:
-		obj.env = bld.env_of_name('debug')
