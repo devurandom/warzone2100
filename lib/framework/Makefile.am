@@ -59,7 +59,8 @@ noinst_HEADERS = \
 	gettext.h \
 	macros.h \
 	SDL_framerate.h \
-	wzglobal.h
+	wzglobal.h \
+	wzobject.h
 
 libframework_a_SOURCES = \
 	resource_lexer.lex.c \
@@ -83,4 +84,5 @@ libframework_a_SOURCES = \
 	tagfile.c \
 	treap.c \
 	trig.c \
-	utf.c
+	utf.c \
+	wzobject.c

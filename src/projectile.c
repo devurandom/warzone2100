@@ -581,6 +581,9 @@ BOOL proj_SendProjectile(WEAPON *psWeap, BASE_OBJECT *psAttacker, int player, Ve
 	return true;
 }
 
+
+const int INSTANT_HIT = -1;
+
 /***************************************************************************/
 
 static void proj_InFlightDirectFunc(PROJECTILE *psProj)
@@ -653,6 +656,23 @@ static void proj_InFlightDirectFunc(PROJECTILE *psProj)
 	}
 
 	/* Do movement */
+	if (psStats->flightSpeed == INSTANT_HIT)
+	{
+		// Warp there
+		if (psProj->psDest)
+		{
+			psProj->pos.x = psProj->psDest->pos.x;
+			psProj->pos.y = psProj->psDest->pos.y;
+			psProj->pos.z = psProj->psDest->pos.z;
+		}
+		else
+		{
+			psProj->pos.x = psProj->tarX;
+			psProj->pos.y = psProj->tarY;
+			psProj->pos.z = psProj->srcHeight + psProj->altChange;
+		}
+	}
+	else
 	{
 		unsigned int targetDistance, currentDistance;
 
@@ -893,6 +913,23 @@ static void proj_InFlightIndirectFunc(PROJECTILE *psProj)
 	distanceExtensionFactor = 1.2f;
 
 	/* Do movement */
+	if (psStats->flightSpeed == INSTANT_HIT)
+	{
+		// Warp there
+		if (psProj->psDest)
+		{
+			psProj->pos.x = psProj->psDest->pos.x;
+			psProj->pos.y = psProj->psDest->pos.y;
+			psProj->pos.z = psProj->psDest->pos.z;
+		}
+		else
+		{
+			psProj->pos.x = psProj->tarX;
+			psProj->pos.y = psProj->tarY;
+			psProj->pos.z = psProj->srcHeight + psProj->altChange;
+		}
+	}
+	else
 	{
 		unsigned int targetDistance, currentDistance;
 
@@ -1151,6 +1188,23 @@ static void proj_ImpactFunc( PROJECTILE *psObj )
 	scatter.x = psStats->radius;
 	scatter.y = 0;
 	scatter.z = psStats->radius;
+
+
+	/*
+	// Render beam, since till now it was invisible
+	if (psStats->flightSpeed == INSTANT_HIT)
+	{
+#define INSTANT_HIT_EFFECT_LIFETIME 300
+		Vector3i size = Vector3i_New(0, 0, 0);
+
+		if (psObj->psSource)
+		{
+			size = Vector3i_Sub(position, Vector3uw_To3i(psObj->psSource->pos));
+		}
+
+		addGenericEffect(&position, &size, GENERIC_TYPE_BEAM, psStats->pInFlightGraphic, 0, INSTANT_HIT_EFFECT_LIFETIME);
+	}
+	*/
 
 	// If the projectile missed its target (or the target died)
 	if (psObj->psDest == NULL)

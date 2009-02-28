@@ -81,7 +81,8 @@ noinst_HEADERS = \
 	droid.h \
 	e3demo.h \
 	edit3d.h \
-	effects.h \
+	effect.h \
+	effects2.h \
 	environ.h \
 	featuredef.h \
 	feature.h \
@@ -107,6 +108,7 @@ noinst_HEADERS = \
 	keybind.h \
 	keyedit.h \
 	keymap.h \
+	legacyeffect.h \
 	levelint.h \
 	levels.h \
 	lighting.h \
@@ -210,7 +212,8 @@ warzone2100_SOURCES = \
 	droid.c \
 	e3demo.c \
 	edit3d.c \
-	effects.c \
+	effect.c \
+	effects2.c \
 	environ.c \
 	feature.c \
 	force-linker.cpp \
@@ -232,6 +235,7 @@ warzone2100_SOURCES = \
 	keybind.c \
 	keyedit.c \
 	keymap.c \
+	legacyeffect.c \
 	level_lexer.lex.c \
 	levels.c \
 	lighting.c \
