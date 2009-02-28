@@ -358,7 +358,7 @@ void combFire(WEAPON *psWeap, BASE_OBJECT *psAttacker, BASE_OBJECT *psTarget, in
 		predict.z = psTarget->pos.z;
 
 		debug(LOG_SENSOR, "combFire: Accurate prediction range (%d)", dice);
-		if (!proj_SendProjectile(psWeap, psAttacker, psAttacker->player, predict, psTarget, false, weapon_slot))
+		if (!Projectile_FireAtObject(psWeap, weapon_slot, psAttacker, psTarget)) // FIXME We should calculate target prediction here!
 		{
 			/* Out of memory - we can safely ignore this */
 			debug(LOG_ERROR, "Out of memory");
@@ -379,17 +379,16 @@ missed:
 	/* Deal with a missed shot */
 	{
 		int missDir = rand() % BUL_MAXSCATTERDIR, missDist = 2 * (100 - resultHitChance);
-		Vector3i miss = {
+		Vector3f miss = {
 			aScatterDir[missDir].x * missDist + psTarget->pos.x + minOffset,
 			aScatterDir[missDir].y * missDist + psTarget->pos.y + minOffset,
 			psTarget->pos.z
 		};
 
-		objTrace(psAttacker->id, "combFire: Missed shot (%d) ended up at (%4d,%4d)", dice, miss.x, miss.y);
+		objTrace(psAttacker->id, "combFire: Missed shot (%d) ended up at (%4f,%4f)", dice, miss.x, miss.y);
 
-		/* Fire off the bullet to the miss location. The miss is only visible if the player owns
-		* the target. (Why? - Per) */
-		proj_SendProjectile(psWeap, psAttacker, psAttacker->player, miss, NULL, psTarget->player == selectedPlayer, weapon_slot);
+		/* Fire off the bullet to the miss location. */
+		Projectile_FireAtLocation(psWeap, weapon_slot, psAttacker, miss);
 	}
 	return;
 }

@@ -55,8 +55,14 @@ PROJECTILE *proj_GetNext(void);		///< Get next projectile in the list.
 
 void	proj_FreeAllProjectiles(void);	///< Free all projectiles in the list.
 
+PROJECTILE *Projectile_Create(unsigned int player, WEAPON *psWeap, Vector3f source, Vector3f direction);
+PROJECTILE *Projectile_Copy(PROJECTILE *psProj);
+bool Projectile_Track(PROJECTILE *psProj);
+bool Projectile_Launch(PROJECTILE *psProj);
+
 /** Send a single projectile against the given target. */
-BOOL	proj_SendProjectile(WEAPON *psWeap, BASE_OBJECT *psAttacker, int player, Vector3i target, BASE_OBJECT *psTarget, BOOL bVisible, int weapon_slot);
+bool Projectile_FireAtObject(WEAPON *psWeap, unsigned int weapon_slot, BASE_OBJECT *psAttacker, BASE_OBJECT *psTarget);
+bool Projectile_FireAtLocation(WEAPON *psWeap, unsigned int weapon_slot, BASE_OBJECT *psAttacker, Vector3f destination);
 
 /** Return whether a weapon is direct or indirect. */
 bool proj_Direct(const WEAPON_STATS* psStats);
@@ -80,12 +86,14 @@ extern BOOL gfxVisible(PROJECTILE *psObj);
 
 extern void	objectShimmy	( BASE_OBJECT *psObj );
 
-static inline void setProjectileDestination(PROJECTILE *psProj, BASE_OBJECT *psObj)
+
+static inline void Projectile_setDestination(PROJECTILE *psProj, BASE_OBJECT *psObj)
 {
 	psProj->psDest = psObj;
 }
 
-static inline void setProjectileSource(PROJECTILE *psProj, BASE_OBJECT *psObj)
+
+static inline void Projectile_setSource(PROJECTILE *psProj, BASE_OBJECT *psObj)
 {
 	// use the source of the source of psProj if psAttacker is a projectile
 	if (psObj && psObj->type == OBJ_PROJECTILE)
@@ -107,10 +115,12 @@ static inline void setProjectileSource(PROJECTILE *psProj, BASE_OBJECT *psObj)
 	}
 }
 
-static inline void setProjectileDamaged(PROJECTILE *psProj, BASE_OBJECT *psObj)
+
+static inline void Projectile_setDamaged(PROJECTILE *psProj, BASE_OBJECT *psObj)
 {
 	psProj->psDamaged = psObj;
 }
+
 
 /* @} */
 

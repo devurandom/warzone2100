@@ -6341,7 +6341,6 @@ BOOL scrGetDroidCount(void)
 // fire a weapon stat at an object
 BOOL scrFireWeaponAtObj(void)
 {
-	Vector3i target;
 	BASE_OBJECT *psTarget;
 	WEAPON sWeapon = {0, 0, 0, 0, 0, 0};
 
@@ -6356,11 +6355,8 @@ BOOL scrFireWeaponAtObj(void)
 		return false;
 	}
 
-	// FIXME HACK Needed since we got those ugly Vector3uw floating around in BASE_OBJECT...
-	target = Vector3uw_To3i(psTarget->pos);
-
 	// send the projectile using the selectedPlayer so that it can always be seen
-	proj_SendProjectile(&sWeapon, NULL, selectedPlayer, target, psTarget, true, 0);
+	Projectile_FireAtObject(&sWeapon, 0, NULL /* FIXME WILL CRASH */, psTarget);
 
 	return true;
 }
@@ -6379,7 +6375,7 @@ BOOL scrFireWeaponAtLoc(void)
 	target.z = map_Height(target.x, target.y);
 
 	// send the projectile using the selectedPlayer so that it can always be seen
-	proj_SendProjectile(&sWeapon, NULL, selectedPlayer, target, NULL, true, 0);
+	Projectile_FireAtLocation(&sWeapon, 0, NULL /* FIXME WILL CRASH */, Vector3i_To3f(target));
 
 	return true;
 }

@@ -51,17 +51,11 @@ typedef struct PROJECTILE
 	BASE_OBJECT*    psDamaged;              ///< the target it already dealt damage to (don't damage the same target twice)
 
 	Vector3f        move;                   ///< Movement vector
-	UDWORD          startX, startY;         ///< Where projectile started
-	UDWORD          tarX, tarY;             ///< The target coordinates
-	SDWORD          vXY, vZ;                ///< axis velocities
-	UDWORD          srcHeight;              ///< Height of origin
-	SDWORD          altChange;              ///< Change in altitude
 	unsigned int    birth; //!< Time of birth
-	unsigned int    death; //!< Time of death
+	unsigned int    death; //!< Time of death (0 -> still living)
 	unsigned int    predictedDeath; //!< Predicted time of death
-	unsigned int	update; //!< Last update
-
-	void (*pInFlightFunc)(struct PROJECTILE* psObj);
+	unsigned int    latestDeath; //!< Projectile is guaranteed to not live longer than till this time
+	unsigned int    update; //!< Last update
 } PROJECTILE;
 
 #endif // __INCLUDED_PROJECTILEDEF_H__
