@@ -1,4 +1,6 @@
-SUBDIRS = framework	\
+SUBDIRS = \
+	platform \
+	framework	\
 	exceptionhandler \
 	script		\
 	sequence	\

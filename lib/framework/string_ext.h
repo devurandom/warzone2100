@@ -26,6 +26,9 @@ extern "C" {
 #endif
 
 #include "wzglobal.h"
+
+#include "lib/platform/string_ext.h"
+
 #include <string.h>
 #include <stddef.h>
 #include <assert.h>
@@ -54,85 +57,6 @@ static inline size_t strnlen1(const char* string, size_t maxlen)
 }
 
 
-#ifndef HAVE_VALID_STRLCPY
-# ifdef HAVE_SYSTEM_STRLCPY
-   // If the system provides a non-conformant strlcpy we use our own
-#  ifdef strlcpy
-#   undef strlcpy
-#  endif
-#  define strlcpy wz_strlcpy
-# endif // HAVE_SYSTEM_STRLCPY
-
-/*!
- * A safer variant of \c strncpy and its completely unsafe variant \c strcpy.
- * Copy src to string dest of size "size". At most size-1 characters will be copied.
- * Always nul-terminates, unless size = 0. Returned value is the entire length of string src.
- * \param dest a pointer to the destination buffer
- * \param src the source string to copy into the \c dest buffer
- * \param size the buffer size (in bytes) of buffer \c dest
- * \return Length to string src, if >= size truncation occured
- */
-static inline size_t strlcpy(char *dest, const char *src, size_t size)
-{
-	assert(src != NULL);
-
-	if (size > 0)
-	{
-		assert(dest != NULL);
-
-		strncpy(dest, src, size - 1);
-
-		// Guarantee to nul-terminate
-		dest[size - 1] = '\0';
-	}
-
-	return strlen(src);
-}
-#endif // HAVE_VALID_STRLCPY
-
-#ifndef HAVE_VALID_STRLCAT
-# ifdef HAVE_SYSTEM_STRLCAT
-   // If the system provides a non-conformant strlcat we use our own
-#  ifdef strlcat
-#   undef strlcat
-#  endif
-#  define strlcat wz_strlcat
-# endif // HAVE_SYSTEM_STRLCAT
-/**
- * A safer variant of \c strncat and its completely unsafe variant \c strcat.
- * Append src to string dest of size "size" (unlike strncat, size is the
- * full size of dest, not space left). At most size-1 characters will be copied.
- * Always nul-terminates, unless size < strlen(dest).
- * Returned value is the entire length of string src + min(size, strlen(dest)).
- * \param dest a pointer to the destination buffer
- * \param src the source string to copy into the \c dest buffer
- * \param size the buffer size (in bytes) of buffer \c dest
- * \return Length to string src + dest, if >= size truncation occured.
- */
-static inline size_t strlcat(char *dest, const char *src, size_t size)
-{
-	size_t len;
-
-	assert(src != NULL);
-	len = strlen(src);
-
-	if (size > 0)
-	{
-		size_t dlen;
-
-		assert(dest != NULL);
-		dlen = strnlen1(dest, size);
-		len += dlen;
-
-		assert(dlen > 0);
-
-		strlcpy(&dest[dlen-1], src, size - dlen);
-	}
-
-	return len;
-}
-#endif // HAVE_VALID_STRLCAT
-
 /*
  * Static array versions of common string functions. Safer because one less parameter to screw up.
  * Can only be used on strings longer than the length of a pointer, because we use this for debugging.
@@ -150,6 +74,7 @@ static inline size_t strlcat(char *dest, const char *src, size_t size)
 #define vssprintf(dest, format, ap) (WZ_ASSERT_STATIC_STRING(dest), vsnprintf((dest), sizeof(dest), format, ap))
 #define sstrcmp(str1, str2) (WZ_ASSERT_STATIC_STRING(str1), WZ_ASSERT_STATIC_STRING(str2), strncmp((str1), (str2), sizeof(str1) > sizeof(str2) ? sizeof(str2) : sizeof(str1)))
 #endif
+
 
 #ifdef __cplusplus
 }

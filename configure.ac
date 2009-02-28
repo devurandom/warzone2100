@@ -361,6 +361,7 @@ AC_CONFIG_FILES([Makefile
 		win32/Makefile
 		tests/Makefile
 		lib/Makefile
+		lib/platform/Makefile
 		lib/framework/Makefile
 		lib/exceptionhandler/Makefile
 		lib/gamelib/Makefile

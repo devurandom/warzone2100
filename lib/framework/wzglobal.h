@@ -557,18 +557,8 @@
 #  include <alloca.h>
 #endif /* WZ_OS_* */
 
-
-#if !defined(WZ_C99) && !defined(va_copy)
-/**
- * Implements the interface of the C99 macro va_copy such that we can use it on
- * non-C99 systems as well.
- *
- * This implementation assumes that va_list is just a pointer to the stack
- * frame of the variadic function. This is by far the most common setup, though
- * it might not always work.
- */
-# define va_copy(dest, src) (void)((dest) = (src))
-#endif // !WZ_C99 && !va_copy
-
+#include "lib/platform/string_platform.h"
+#include "lib/platform/stdarg_platform.h"
+#include "lib/platform/stdio_platform.h"
 
 #endif /* WZGLOBAL_H */
