@@ -233,35 +233,20 @@ static void getTileTexCoords(Vector2f *uv, unsigned int tileNumber)
 	const unsigned short tile = TileNumber_tile(tileNumber);
 
 	/* Used to calculate texture coordinates */
-	const float xMult = 1.0f / TILES_IN_PAGE_COLUMN;
-	const float yMult = 1.0f / TILES_IN_PAGE_ROW;
-	float texsize = (float)getTextureSize();
-	float centertile, shiftamount, one;
-	Vector2f sP1, sP2, sP3, sP4, sPTemp;
+	const float right = 1.0f / TILES_IN_PAGE_COLUMN;
+	const float bottom = 1.0f / TILES_IN_PAGE_ROW;
+	const float halfTexel = 0.5f / getTextureSize();
 
-	// the decals are 128x128 (at this time), we should not go above this value.  See note above
-	if (texsize > MAX_TILE_TEXTURE_SIZE)
-	{
-		texsize = MAX_TILE_TEXTURE_SIZE;
-	}
-	centertile = 0.5f / texsize;			//compute center of tile
-	shiftamount = (texsize -1.0) / texsize;	// 1 pixel border
-	one = 1.0f / (TILES_IN_PAGE_COLUMN * texsize);
-
-	// bump the texture coords, for 1 pixel border, so our range is [.5,(texsize - .5)]
-	one += centertile * shiftamount;
 	/*
 	 * Points for flipping the texture around if the tile is flipped or rotated
 	 * Store the source rect as four points
 	 */
-	sP1.x = one;
-	sP1.y = one;
-	sP2.x = xMult - one;
-	sP2.y = one;
-	sP3.x = xMult - one;
-	sP3.y = yMult - one;
-	sP4.x = one;
-	sP4.y = yMult - one;
+	Vector2f
+		sP1 = { halfTexel, halfTexel },
+		sP2 = { right - halfTexel, halfTexel },
+		sP3 = { right - halfTexel, bottom - halfTexel },
+		sP4 = { halfTexel, bottom - halfTexel },
+		sPTemp;
 
 	if (texture & TILE_XFLIP)
 	{
@@ -308,6 +293,7 @@ static void getTileTexCoords(Vector2f *uv, unsigned int tileNumber)
 			sP4 = sPTemp;
 			break;
 	}
+
 	uv[0 + 0].x = tileTexInfo[tile].uOffset + sP1.x;
 	uv[0 + 0].y = tileTexInfo[tile].vOffset + sP1.y;
 
