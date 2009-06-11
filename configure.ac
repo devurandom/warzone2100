@@ -40,8 +40,8 @@ AX_PROG_PERL_VERSION([5.10], [], [ PERL="" ])
 AC_SUBST([PERL])
 AM_CONDITIONAL([PERL_AVAILABLE], test -n "$PERL")
 
-# Enable Compiler/LibC GNU extensions
-AC_GNU_SOURCE
+# Enable various OS extensions
+AC_USE_SYSTEM_EXTENSIONS
 
 # Check for the strlcpy and strlcat functions
 AX_CHECK_STRLCPY
@@ -77,7 +77,7 @@ case ${host_os} in
 		case ${host_os} in
 			*freebsd*) ;;
 			*)
-				AC_DEFINE([_XOPEN_SOURCE], 600, [Enable POSIX extensions if present])
+#				AC_DEFINE([_XOPEN_SOURCE], 600, [Enable POSIX extensions if present])
 				;;
 		esac
 
