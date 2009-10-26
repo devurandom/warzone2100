@@ -1,12 +1,12 @@
 SUBDIRS = mods music
 
 stamp:
-	touch stamp
+	-touch stamp
 
-%.wz: $(abs_srcdir)/% stamp
-	(cd $(srcdir)/$(notdir $<) && zip -ru0 $(abs_builddir)/$@ $(filter-out stamp,$(filter-out $<,$(^:$</%=%))) -x '*svn*' -x '*Makefile*' || [ $$? -eq 12 ] && true) # zip returns 12 on "nothing to do"
-	zip -T $@
-	rm -f stamp
+%.wz: $(srcdir)/% stamp
+	$(AM_V_GEN)(cd $(srcdir)/$(notdir $<) && zip -ru0 $(abs_builddir)/$@ $(filter-out stamp,$(filter-out $<,$(^:$</%=%))) -x '*svn*' -x '*Makefile*' || [ $$? -eq 12 ] && true) # zip returns 12 on "nothing to do"
+	$(AM_V_at)zip -T $@
+	-rm -f stamp
 
 BASELIST = \
 	anims \
